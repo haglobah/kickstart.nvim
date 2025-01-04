@@ -156,6 +156,8 @@ vim.opt.cursorline = true
 -- Minimal number of screen lines to keep above and below the cursor.
 vim.opt.scrolloff = 10
 
+vim.opt.wildmode = "list:longest,list:full"
+
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
 
@@ -188,6 +190,34 @@ vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left wind
 vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
 vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
+
+vim.keymap.set('n', '<leader>l', ':Lazy<CR>', { desc = 'Open Lazy' })
+
+local function open_links_in_selection()
+  -- Get the visual selection
+  local start_pos = vim.fn.getpos("'<")
+  local end_pos = vim.fn.getpos("'>")
+  local lines = vim.fn.getline(start_pos[2], end_pos[2])
+
+  -- Combine lines into a single string
+  local text = table.concat(lines, "\n")
+
+  -- Extract URLs using a Lua pattern
+  local urls = {}
+  for url in string.gmatch(text, "(https?://[%w._%-%?&/=:#]+)") do
+    table.insert(urls, url)
+  end
+
+  -- Open each URL
+  for _, url in ipairs(urls) do
+    local open_cmd = string.format("xdg-open '%s' &", url) -- Linux (replace with `open` for macOS or `start` for Windows)
+    os.execute(open_cmd)
+  end
+end
+
+vim.keymap.set('v', '<leader>o', function ()
+  open_links_in_selection()
+end, { desc = "Open links in selection" })
 
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
