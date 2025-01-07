@@ -158,6 +158,28 @@ vim.opt.scrolloff = 10
 
 vim.opt.wildmode = "list:longest,list:full"
 
+-- Use spaces instead of tabs
+vim.opt.expandtab = true
+
+-- Set default tab width to 2 spaces
+vim.opt.tabstop = 2
+vim.opt.shiftwidth = 2
+vim.opt.softtabstop = 2
+
+-- Enable automatic indentation
+vim.opt.autoindent = true
+
+-- Apply to all filetypes (fallback for unknown filetypes)
+vim.api.nvim_create_autocmd("FileType", {
+    pattern = "*",
+    callback = function()
+        vim.bo.expandtab = true
+        vim.bo.tabstop = 2
+        vim.bo.shiftwidth = 2
+        vim.bo.softtabstop = 2
+    end,
+})
+
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
 
